@@ -1,0 +1,34 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/survey/layout,_N_T_/survey/page,_N_T_/survey"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/survey/__PAGE__"
+  ],
+  "prefetchHints": {
+    "hints": 64,
+    "slots": {
+      "children": {
+        "hints": 96,
+        "slots": {
+          "children": {
+            "hints": 160,
+            "slots": null
+          }
+        }
+      }
+    }
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/5eaa4119e83991ff4b1919134b36076d05e00c92c94d7fbd962d0037777c5732/$/survey",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/survey/page"
+    },
+    "isFallback": false
+  }
+}

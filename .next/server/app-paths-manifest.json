@@ -1,0 +1,11 @@
+{
+  "/_global-error/page": "app/_global-error/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/analyze/route": "app/api/analyze/route.js",
+  "/api/trends/route": "app/api/trends/route.js",
+  "/page": "app/page.js",
+  "/result/page": "app/result/page.js",
+  "/survey/page": "app/survey/page.js",
+  "/survey/step-2/page": "app/survey/step-2/page.js",
+  "/survey/step-3/page": "app/survey/step-3/page.js"
+}

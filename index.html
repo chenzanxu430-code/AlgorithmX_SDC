@@ -1,0 +1,1321 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AI 技能转型导航 · 信息收集</title>
+<style>
+  /* ===== 设计变量：改配色只需要改这里 ===== */
+  :root {
+    --page-bg: #1a1a1a;
+    /* 墨绿卡片：上浅下深，做出一点渐变光泽 */
+    --card-top: #123B2F;
+    --card-bottom: #0A241C;
+    --card-bg: #0F332A;
+    /* 卡片内部的层级表面 */
+    --surface: rgba(255, 255, 255, 0.035);
+    --surface-strong: rgba(255, 255, 255, 0.07);
+    --field-bg: rgba(0, 0, 0, 0.22);
+    --text-strong: #EAF3EE;
+    --text-body: #C3D7CC;
+    --text-muted: #8FA89B;
+    --line: rgba(255, 255, 255, 0.09);
+    --line-strong: rgba(255, 255, 255, 0.18);
+    --brand: #3FBF8F;
+    --brand-ink: #06231B;
+    --brand-soft: rgba(63, 191, 143, 0.14);
+    --gold: #C8A96A;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--page-bg);
+    color: var(--text-strong);
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+      "PingFang SC", "Microsoft YaHei", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    display: flex;
+    justify-content: center;
+    padding: 48px 16px 72px;
+  }
+
+  .shell { width: 100%; max-width: 820px; }
+
+  /* ===== 顶部胶囊步骤条 ===== */
+  .stepper { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 18px; }
+
+  .step-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: 999px;
+    border: 1px solid #C9CFC7;
+    background: #EDEFEA;
+    color: #33473D;
+    font-size: 14px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background-color .15s ease, border-color .15s ease, color .15s ease;
+  }
+  .step-pill:hover { border-color: #A8B3A8; }
+  .step-pill:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+
+  .step-pill .check {
+    display: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--brand);
+    color: var(--brand-ink);
+    font-size: 11px;
+    line-height: 18px;
+    text-align: center;
+    flex: none;
+  }
+
+  /* 激活 或 已完成：白底 + 绿边 + 加粗 + 绿色勾选 */
+  .step-pill.is-active,
+  .step-pill.is-done {
+    background: #F6FAF7;
+    border-color: var(--brand);
+    color: #12302A;
+    font-weight: 700;
+  }
+  .step-pill.is-active .check,
+  .step-pill.is-done .check { display: inline-block; }
+
+  /* ===== 白色卡片 ===== */
+  .card {
+    background:
+      radial-gradient(120% 90% at 12% 0%, rgba(255, 255, 255, .07) 0%, rgba(255, 255, 255, 0) 45%),
+      linear-gradient(165deg, var(--card-top) 0%, var(--card-bottom) 100%);
+    border: 1px solid rgba(255, 255, 255, .10);
+    border-radius: 22px;
+    padding: 28px;
+    box-shadow:
+      0 30px 70px rgba(0, 0, 0, .55),
+      inset 0 1px 0 rgba(255, 255, 255, .07);
+  }
+  @media (max-width: 560px) { .card { padding: 20px; } }
+
+  .panel[hidden] { display: none; }
+
+  .panel-head { margin-bottom: 22px; }
+  .panel-head h1 { margin: 0 0 6px; font-size: 20px; letter-spacing: -.01em; }
+  .panel-head p { margin: 0; font-size: 13px; line-height: 1.7; color: var(--text-muted); }
+  .eyebrow {
+    margin: 0 0 6px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .14em;
+    color: var(--brand);
+  }
+
+  /* ===== 基础表单控件 ===== */
+  .field { margin-bottom: 20px; }
+  .field label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+  .field .hint { margin-top: 6px; font-size: 12px; color: var(--text-muted); }
+
+  input[type="number"],
+  select {
+    width: 100%;
+    padding: 11px 13px;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--text-strong);
+    background: var(--field-bg);
+    border: 1px solid var(--line-strong);
+    border-radius: 10px;
+    transition: border-color .15s ease, box-shadow .15s ease;
+  }
+  input[type="number"]:focus,
+  select:focus {
+    outline: none;
+    border-color: var(--brand);
+    box-shadow: 0 0 0 3px rgba(63, 191, 143, .18);
+  }
+  select option { background: #10322A; color: #EAF3EE; }
+
+  .row { display: flex; gap: 14px; flex-wrap: wrap; }
+  .row > .field { flex: 1 1 200px; margin-bottom: 0; }
+
+  .slider-head { display: flex; justify-content: space-between; align-items: baseline; }
+  .slider-value { font-size: 13px; font-weight: 700; color: var(--brand); }
+  input[type="range"] { width: 100%; accent-color: var(--brand); margin-top: 4px; }
+
+  /* ===== 选项分组 ===== */
+  .group { margin-bottom: 26px; }
+  .group-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 4px; }
+  .group-head h2 { margin: 0; font-size: 15px; }
+  .group-count { font-size: 12px; color: var(--text-muted); }
+  .group-hint { margin: 0 0 12px; font-size: 12px; line-height: 1.6; color: var(--text-muted); }
+
+  .options { display: grid; gap: 10px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  @media (max-width: 620px) { .options { grid-template-columns: 1fr; } }
+
+  .option-card {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 13px 38px 13px 14px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--surface);
+    cursor: pointer;
+    font-size: 13px;
+    line-height: 1.55;
+    color: var(--text-body);
+    transition: border-color .15s ease, background-color .15s ease;
+  }
+  .option-card:hover { border-color: var(--line-strong); background: var(--surface-strong); }
+  .option-card:focus-within { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(63, 191, 143, .18); }
+
+  /* 保留原生控件可访问性，视觉隐藏 */
+  .option-card input { position: absolute; opacity: 0; width: 1px; height: 1px; margin: 0; }
+
+  .option-check {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--brand);
+    color: var(--brand-ink);
+    font-size: 11px;
+    line-height: 18px;
+    text-align: center;
+    font-weight: 700;
+  }
+  .option-card.is-selected {
+    border-color: var(--brand);
+    background: var(--brand-soft);
+    color: var(--text-strong);
+    box-shadow: inset 0 0 0 1px rgba(63, 191, 143, .25);
+  }
+  .option-card.is-selected .option-check { display: block; }
+
+  /* ===== 底部操作区 ===== */
+  .panel-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 10px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+  }
+  .panel-actions .spacer { flex: 1; }
+
+  .btn {
+    padding: 11px 18px;
+    font-size: 14px;
+    font-family: inherit;
+    border-radius: 10px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: background-color .15s ease, border-color .15s ease, color .15s ease;
+  }
+  .btn:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+  .btn-ghost { background: transparent; border-color: var(--line-strong); color: var(--text-body); }
+  .btn-ghost:hover { border-color: var(--brand); color: var(--text-strong); }
+  .btn-primary {
+    background: linear-gradient(180deg, #46C795 0%, #33B183 100%);
+    color: var(--brand-ink);
+    font-weight: 700;
+    box-shadow: 0 8px 20px rgba(63, 191, 143, .18);
+  }
+  .btn-primary:hover { background: linear-gradient(180deg, #52D2A0 0%, #3ABD8D 100%); }
+
+  /* 提示条放在卡片外，任何步骤都能看到 */
+  .toast {
+    margin-top: 14px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: rgba(63, 191, 143, .12);
+    border: 1px solid rgba(63, 191, 143, .35);
+    color: #BFEBD8;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  .toast[hidden] { display: none; }
+
+  .notice {
+    display: flex;
+    gap: 8px;
+    padding: 11px 13px;
+    margin-bottom: 18px;
+    border-radius: 10px;
+    background: rgba(200, 169, 106, .12);
+    border: 1px solid rgba(200, 169, 106, .32);
+    color: #E8D3A8;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  .notice[hidden] { display: none; }
+
+  /* ===== 结果页 ===== */
+  .result-grid { display: grid; gap: 12px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  @media (max-width: 640px) { .result-grid { grid-template-columns: 1fr; } }
+
+  .result-card {
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px;
+    background: var(--surface);
+  }
+  .result-card h2 { margin: 0 0 10px; font-size: 14px; }
+  .result-card.result-wide { grid-column: 1 / -1; }
+
+  .kv { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 6px 12px; font-size: 13px; }
+  .kv dt { color: var(--text-muted); }
+  .kv dd { margin: 0; color: var(--text-strong); font-weight: 600; }
+
+  .chip-row { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chip {
+    display: inline-block;
+    padding: 4px 9px;
+    border-radius: 999px;
+    background: rgba(63, 191, 143, .13);
+    border: 1px solid rgba(63, 191, 143, .22);
+    color: #CFF3E2;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .chip-muted {
+    background: var(--surface-strong);
+    border-color: var(--line);
+    color: var(--text-muted);
+  }
+  .chip-group { margin-bottom: 10px; }
+  .chip-group:last-child { margin-bottom: 0; }
+  .chip-label { display: block; font-size: 11px; color: var(--text-muted); margin-bottom: 5px; }
+
+  .match { margin-bottom: 14px; }
+  .match:last-child { margin-bottom: 0; }
+  .match-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+  .match-title { font-size: 13px; font-weight: 700; }
+  .match-score { font-size: 13px; font-weight: 700; color: var(--brand); font-variant-numeric: tabular-nums; }
+  .match-bar { height: 6px; border-radius: 999px; background: rgba(255, 255, 255, .10); overflow: hidden; margin: 6px 0; }
+  .match-bar > span { display: block; height: 100%; border-radius: 999px; background: var(--brand); }
+  .match-reason { margin: 0; font-size: 12px; line-height: 1.6; color: var(--text-muted); }
+
+  .plan-list { margin: 0; padding-left: 18px; font-size: 13px; line-height: 1.9; color: var(--text-body); }
+  .plan-list strong { color: var(--text-strong); }
+
+  .raw { margin-top: 16px; font-size: 12px; color: var(--text-muted); }
+  .raw summary { cursor: pointer; }
+  .raw pre {
+    margin: 10px 0 0;
+    padding: 12px;
+    border-radius: 10px;
+    background: rgba(0, 0, 0, .28);
+    border: 1px solid var(--line);
+    color: #C9DED3;
+    font-size: 12px;
+    line-height: 1.6;
+    overflow-x: auto;
+  }
+</style>
+</head>
+<body>
+  <div class="shell">
+    <!-- ===== 顶部三个胶囊标签 ===== -->
+    <nav class="stepper" id="stepper" aria-label="填写步骤">
+      <button class="step-pill is-active" type="button" data-step="1" aria-pressed="true">
+        <span class="check" aria-hidden="true">✔</span>
+        <span>1. 基本信息</span>
+      </button>
+      <button class="step-pill" type="button" data-step="2" aria-pressed="false">
+        <span class="check" aria-hidden="true">✔</span>
+        <span>2. 任务与技能</span>
+      </button>
+      <button class="step-pill" type="button" data-step="3" aria-pressed="false">
+        <span class="check" aria-hidden="true">✔</span>
+        <span>3. 兴趣与情景</span>
+      </button>
+    </nav>
+
+    <main class="card">
+      <!-- ---------- 步骤 1：基本信息 ---------- -->
+      <section class="panel" data-panel="1">
+        <div class="panel-head">
+          <h1>先介绍一下你的工作现状</h1>
+          <p>岗位决定后面两步的选项内容，请先选择；不确定可以选「其他 / 暂不确定」。</p>
+        </div>
+
+        <div class="field">
+          <label for="roleSelect">当前岗位</label>
+          <select id="roleSelect">
+            <option value="">请选择岗位…</option>
+            <!-- 选项与脚本里 ROLE_PRESETS 的键一一对应，改名时两边同步 -->
+            <option value="客服专员">客服专员</option>
+            <option value="行政助理">行政助理</option>
+            <option value="运营专员">运营专员</option>
+            <option value="销售代表">销售代表</option>
+            <option value="市场专员">市场专员</option>
+            <option value="人力资源专员">人力资源专员</option>
+            <option value="财务会计">财务会计</option>
+            <option value="教师">教师</option>
+            <option value="医护人员">医护人员</option>
+            <option value="视觉设计师">视觉设计师</option>
+            <option value="程序员">程序员</option>
+            <option value="数据分析师">数据分析师</option>
+            <option value="零售店长 / 电商店主">零售店长 / 电商店主</option>
+            <option value="物流仓储专员">物流仓储专员</option>
+            <option value="生产制造技术员">生产制造技术员</option>
+            <option value="自由职业 / 待业">自由职业 / 待业</option>
+            <option value="其他">其他 / 暂不确定</option>
+          </select>
+          <p class="hint">共 16 个常见岗位方向。换岗位会重新生成第二步与第三步的选项，已勾选内容会被清空。</p>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="yearsInput">工作经验年数</label>
+            <input id="yearsInput" type="number" min="0" max="50" step="1" value="3" />
+          </div>
+
+          <div class="field">
+            <label for="hoursRange">每周可学习时间</label>
+            <div class="slider-head">
+              <span class="hint" style="margin:0">拖动滑块选择</span>
+              <span class="slider-value" id="hoursValue">8 小时 / 周</span>
+            </div>
+            <input id="hoursRange" type="range" min="1" max="40" step="1" value="8" />
+          </div>
+        </div>
+
+        <div class="panel-actions">
+          <span class="spacer"></span>
+          <button class="btn btn-primary" type="button" data-goto="2">下一步</button>
+        </div>
+      </section>
+
+      <!-- ---------- 步骤 2：任务与技能 ---------- -->
+      <section class="panel" data-panel="2" hidden>
+        <div class="panel-head">
+          <h1 id="step2Title">日常任务与已有技能</h1>
+          <p id="step2Subtitle">选择你实际在做的事情，以及已经掌握的能力。</p>
+        </div>
+
+        <div class="notice" id="step2Notice" hidden>
+          <span aria-hidden="true">!</span>
+          <span>还没有选择岗位，下面展示的是通用选项。回到「基本信息」选择岗位后会更准确。</span>
+        </div>
+
+        <div class="group">
+          <div class="group-head">
+            <h2>日常任务</h2>
+            <span class="group-count" id="taskCount">已选 0 项</span>
+          </div>
+          <p class="group-hint">选择 2–8 个你最近常做的任务，任务会用于分析 AI 影响。</p>
+          <div class="options" id="taskOptions"></div>
+        </div>
+
+        <div class="group">
+          <div class="group-head">
+            <h2>已有技能</h2>
+            <span class="group-count" id="skillCount">已选 0 项</span>
+          </div>
+          <p class="group-hint">选择 1–6 个你比较有把握的技能。</p>
+          <div class="options" id="skillOptions"></div>
+        </div>
+
+        <div class="group">
+          <div class="group-head">
+            <h2>最耗时的环节</h2>
+            <span class="group-count" id="painCount">已选 0 项</span>
+          </div>
+          <p class="group-hint">选择 1–4 个最消耗你时间的环节，用于判断哪里最值得先用 AI 提效。</p>
+          <div class="options" id="painOptions"></div>
+        </div>
+
+        <div class="group">
+          <div class="group-head">
+            <h2>工作中使用 AI 工具的频率</h2>
+            <span class="group-count" id="aiUsageCount">已选 0 项</span>
+          </div>
+          <p class="group-hint">选择 1 个。频率越高，越会推荐进阶方向。</p>
+          <div class="options" id="aiUsageOptions"></div>
+        </div>
+
+        <div class="panel-actions">
+          <button class="btn btn-ghost" type="button" data-goto="1">上一步</button>
+          <button class="btn btn-primary" type="button" data-goto="3">下一步</button>
+        </div>
+      </section>
+
+      <!-- ---------- 步骤 3：兴趣与情景 ---------- -->
+      <section class="panel" data-panel="3" hidden>
+        <div class="panel-head">
+          <h1>兴趣方向、学习偏好与变化情景</h1>
+          <p>这些信息会影响推荐方向的排序与学习节奏。</p>
+        </div>
+
+        <div class="notice" id="step3Notice" hidden>
+          <span aria-hidden="true">!</span>
+          <span>还没有选择岗位，下面展示的是通用兴趣选项。</span>
+        </div>
+
+        <div class="group">
+          <div class="group-head">
+            <h2>兴趣方向</h2>
+            <span class="group-count" id="interestCount">已选 0 项</span>
+          </div>
+          <p class="group-hint">选择 1–6 个。兴趣会影响岗位推荐的权重。</p>
+          <div class="options" id="interestOptions"></div>
+        </div>
+
+        <div class="group">
+          <div class="group-head">
+            <h2>期望的转型方向</h2>
+            <span class="group-count" id="directionCount">已选 0 项</span>
+          </div>
+          <p class="group-hint">选择 1–3 个。用于判断你更愿意往哪个方向走。</p>
+          <div class="options" id="directionOptions"></div>
+        </div>
+
+        <div class="group">
+          <div class="group-head">
+            <h2>学习方式偏好</h2>
+            <span class="group-count" id="formatCount">已选 0 项</span>
+          </div>
+          <p class="group-hint">选择 1–3 个。学习建议会优先匹配你偏好的方式。</p>
+          <div class="options" id="formatOptions"></div>
+        </div>
+
+        <div class="group">
+          <div class="group-head">
+            <h2>可接受的学习周期</h2>
+            <span class="group-count" id="horizonCount">已选 0 项</span>
+          </div>
+          <p class="group-hint">选择 1 个。用于判断计划强度是否可行。</p>
+          <div class="options" id="horizonOptions"></div>
+        </div>
+
+        <div class="group">
+          <div class="group-head">
+            <h2>变化情景</h2>
+            <span class="group-count" id="scenarioCount">已选 0 项</span>
+          </div>
+          <p class="group-hint">选择 1 个。变化越快，数据类技能会被排到更前面。</p>
+          <div class="options" id="scenarioOptions"></div>
+        </div>
+
+        <div class="panel-actions">
+          <button class="btn btn-ghost" type="button" data-goto="2">上一步</button>
+          <button class="btn btn-primary" type="button" id="submitBtn">提交</button>
+        </div>
+      </section>
+
+      <!-- ---------- 结果：提交后在页面内展示 ---------- -->
+      <section class="panel" data-panel="result" hidden>
+        <div class="panel-head">
+          <p class="eyebrow">分析结果</p>
+          <h1>你的技能转型画像</h1>
+          <p id="resultSummary"></p>
+        </div>
+
+        <div class="result-grid">
+          <article class="result-card">
+            <h2>基本情况</h2>
+            <dl class="kv" id="resultBasics"></dl>
+          </article>
+
+          <article class="result-card">
+            <h2>技能画像</h2>
+            <div id="resultSkills"></div>
+          </article>
+
+          <article class="result-card result-wide">
+            <h2>推荐方向</h2>
+            <div id="resultDirections"></div>
+          </article>
+
+          <article class="result-card result-wide">
+            <h2>学习建议</h2>
+            <div id="resultPlan"></div>
+          </article>
+        </div>
+
+        <details class="raw">
+          <summary>查看提交的原始数据（JSON）</summary>
+          <pre id="rawJson"></pre>
+        </details>
+
+        <div class="panel-actions">
+          <button class="btn btn-ghost" type="button" data-back>返回修改</button>
+          <button class="btn btn-primary" type="button" data-reset>重新填写</button>
+        </div>
+      </section>
+    </main>
+
+    <div class="toast" id="toast" hidden></div>
+  </div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* =========================================================
+   * 1. 可修改的配置区
+   * ======================================================= */
+
+  /** 通用选项：会和每个岗位的专属选项合并展示 */
+  const COMMON_TASKS = [
+    '整理与汇总信息',
+    '重复录入与核对',
+    '写方案 / 文案 / 邮件',
+    '与同事或客户沟通',
+    '开会与跨部门协调',
+    '处理临时突发问题',
+  ];
+
+  const COMMON_SKILLS = [
+    '沟通表达',
+    'Excel',
+    '时间管理',
+    '文档写作',
+    '问题排查',
+    '学习新工具的能力',
+  ];
+
+  const COMMON_INTERESTS = [
+    '喜欢从数据中找规律',
+    '喜欢与人协作，辅导他人',
+    '喜欢把流程做得更顺',
+    '喜欢内容创作与表达',
+    '喜欢学习新的 AI 工具',
+    '喜欢解决具体问题',
+  ];
+
+  /** 每个岗位的专属「任务 / 技能 / 兴趣」。改文案直接改字符串即可。 */
+  const ROLE_PRESETS = {
+    '客服专员': {
+      tasks: ['回复客户咨询与投诉', '处理售后与退换货', '整理客服数据报表', '用 Excel 汇总工单量', '把用户反馈同步给产品', '维护常见问题文档'],
+      skills: ['客户沟通', '情绪管理', 'Excel', '流程执行', '打字与录入', '投诉处理'],
+      interests: ['喜欢与人协作，辅导他人', '喜欢把流程做得更顺', '喜欢沉淀文档与知识库', '喜欢从数据中找规律'],
+    },
+    '行政助理': {
+      tasks: ['安排会议与差旅', '整理归档合同文件', '协调跨部门流程', '维护办公用品库存', '起草通知与会议纪要', '对接外部供应商'],
+      skills: ['流程管理', 'Office 办公软件', '沟通表达', '时间管理', '文档写作', '供应商对接'],
+      interests: ['喜欢把流程做得更顺', '喜欢用工具替代重复劳动', '喜欢与人协作，辅导他人', '喜欢学习新的 AI 工具'],
+    },
+    '运营专员': {
+      tasks: ['活动排期与执行', '撰写商品与活动文案', '监测竞品价格与评价', '复盘活动数据', '维护社群与用户互动', '对接设计与投放'],
+      skills: ['内容策划', '数据分析', 'Excel', '项目管理', '用户沟通', '活动执行'],
+      interests: ['喜欢从数据中找规律', '喜欢内容创作与表达', '喜欢学习新的 AI 工具', '喜欢与人协作，辅导他人'],
+    },
+    '销售代表': {
+      tasks: ['电话与上门拜访客户', '制作报价与方案', '跟进销售漏斗', '维护客户关系', '整理销售报表', '处理订单与回款'],
+      skills: ['客户沟通', '谈判成交', 'Excel', 'CRM 工具', '时间管理', '抗压能力'],
+      interests: ['喜欢与人协作，辅导他人', '喜欢解决具体问题', '喜欢从数据中找规律', '喜欢内容创作与表达'],
+    },
+    '市场专员': {
+      tasks: ['策划推广活动', '撰写营销文案', '维护社交媒体账号', '做竞品与市场调研', '投放与效果复盘', '对接代理商与媒体'],
+      skills: ['内容策划', '市场调研', '数据分析', 'Excel', '项目管理', '社媒运营'],
+      interests: ['喜欢内容创作与表达', '喜欢从数据中找规律', '喜欢学习新的 AI 工具', '喜欢解决具体问题'],
+    },
+    '人力资源专员': {
+      tasks: ['发布与筛选简历', '安排面试', '维护员工档案', '办理入离职手续', '组织培训与活动', '统计人力数据'],
+      skills: ['招聘面试', '沟通表达', 'Excel', '流程管理', '文档写作', '劳动法规基础'],
+      interests: ['喜欢与人协作，辅导他人', '喜欢把流程做得更顺', '喜欢沉淀文档与知识库', '喜欢从数据中找规律'],
+    },
+    '财务会计': {
+      tasks: ['记账与凭证录入', '月度结账与对账', '报销审核', '编制财务报表', '税务申报', '配合审计'],
+      skills: ['财务核算', 'Excel', '报表编制', '税务基础', '细致严谨', 'ERP 软件'],
+      interests: ['喜欢从数据中找规律', '喜欢把流程做得更顺', '喜欢解决具体问题', '喜欢沉淀文档与知识库'],
+    },
+    '教师': {
+      tasks: ['备课与设计教案', '课堂授课', '批改作业与答疑', '与家长沟通', '组织班级活动', '参加教研与培训'],
+      skills: ['课程设计', '表达讲授', '沟通表达', '文档写作', '课堂管理', '学习评估'],
+      interests: ['喜欢与人协作，辅导他人', '喜欢内容创作与表达', '喜欢沉淀文档与知识库', '喜欢学习新的 AI 工具'],
+    },
+    '医护人员': {
+      tasks: ['患者接待与分诊', '执行护理操作', '书写护理记录', '与医生交接病情', '健康宣教', '处理突发状况'],
+      skills: ['临床护理', '沟通表达', '应急处置', '文档记录', '团队协作', '细致严谨'],
+      interests: ['喜欢与人协作，辅导他人', '喜欢解决具体问题', '喜欢把流程做得更顺', '喜欢沉淀文档与知识库'],
+    },
+    '视觉设计师': {
+      tasks: ['设计海报与物料', '维护品牌视觉规范', '对接需求方改稿', '处理图片与素材', '输出设计稿', '参与创意提案'],
+      skills: ['平面设计', 'PS 与 AI 工具', '排版审美', '沟通表达', '项目管理', '素材管理'],
+      interests: ['喜欢内容创作与表达', '喜欢学习新的 AI 工具', '喜欢解决具体问题', '喜欢从数据中找规律'],
+    },
+    '程序员': {
+      tasks: ['需求分析与方案设计', '编写与调试代码', '代码评审', '修复线上问题', '写技术文档', '与产品对齐需求'],
+      skills: ['编程语言', '数据库', '系统设计', '问题排查', '文档写作', '团队协作'],
+      interests: ['喜欢解决具体问题', '喜欢学习新的 AI 工具', '喜欢从数据中找规律', '喜欢把流程做得更顺'],
+    },
+    '数据分析师': {
+      tasks: ['编写 SQL 取数', '制作周报与看板', '设计指标口径', '做 A/B 实验分析', '清洗与校验数据', '向业务方解释结论'],
+      skills: ['SQL', 'Python', '数据可视化', '统计分析', 'Excel', '业务理解'],
+      interests: ['喜欢从数据中找规律', '喜欢学习新的 AI 工具', '喜欢把流程做得更顺', '喜欢内容创作与表达'],
+    },
+    '零售店长 / 电商店主': {
+      tasks: ['排班与门店管理', '选品与定价', '处理订单与发货', '维护客户与会员', '盘点库存', '看销售数据做调整'],
+      skills: ['门店运营', '库存管理', '客户沟通', 'Excel', '团队管理', '成本控制'],
+      interests: ['喜欢从数据中找规律', '喜欢与人协作，辅导他人', '喜欢解决具体问题', '喜欢内容创作与表达'],
+    },
+    '物流仓储专员': {
+      tasks: ['收货与入库', '拣货与打包', '库存盘点', '安排配送', '处理异常件', '录入系统单据'],
+      skills: ['仓储作业', '库存管理', 'Excel', '流程执行', '问题排查', '设备操作'],
+      interests: ['喜欢把流程做得更顺', '喜欢用工具替代重复劳动', '喜欢解决具体问题', '喜欢从数据中找规律'],
+    },
+    '生产制造技术员': {
+      tasks: ['设备操作与点检', '按工艺生产', '质量检验', '记录生产数据', '处理设备异常', '参与现场改善'],
+      skills: ['设备操作', '质量管理', '安全意识', 'Excel', '问题排查', '团队协作'],
+      interests: ['喜欢解决具体问题', '喜欢把流程做得更顺', '喜欢用工具替代重复劳动', '喜欢从数据中找规律'],
+    },
+    '自由职业 / 待业': {
+      tasks: ['接单与客户沟通', '自己安排项目进度', '写方案与报价', '学习新技能', '维护作品集', '处理账务与发票'],
+      skills: ['自我管理', '沟通表达', '内容创作', '项目管理', 'Excel', '学习新工具的能力'],
+      interests: ['喜欢内容创作与表达', '喜欢学习新的 AI 工具', '喜欢与人协作，辅导他人', '喜欢解决具体问题'],
+    },
+  };
+
+  /** 未选择岗位时展示的通用选项 */
+  const DEFAULT_PRESET = {
+    tasks: ['处理日常事务', '整理与汇总信息', '与同事或客户沟通', '跟进流程节点', '做重复性的录入工作', '准备汇报材料'],
+    skills: ['沟通表达', 'Excel', '流程执行', '文档写作', '时间管理', '问题排查'],
+    interests: ['喜欢从数据中找规律', '喜欢与人协作，辅导他人', '喜欢把流程做得更顺', '喜欢学习新的 AI 工具'],
+  };
+
+  /** 最耗时的环节（多选） */
+  const PAIN_OPTIONS = [
+    '收集与整理信息',
+    '重复录入与核对',
+    '写方案与文案',
+    '开会与协调',
+    '处理客户情绪',
+    '临时救火',
+    '学习新工具 / 新系统',
+    '做汇报与复盘',
+  ];
+
+  /** 工作中使用 AI 的频率（单选） */
+  const AI_USAGE_OPTIONS = [
+    { value: 'none', label: '几乎不用', desc: '主要靠手工和既有流程' },
+    { value: 'rare', label: '偶尔用', desc: '偶尔用一下聊天类工具' },
+    { value: 'weekly', label: '每周都用', desc: '会用 AI 处理写稿、总结等任务' },
+    { value: 'daily', label: '每天都在用', desc: 'AI 已经嵌入日常工作流' },
+  ];
+
+  /** 期望转型方向（多选） */
+  const DIRECTION_OPTIONS = [
+    '深耕本专业',
+    '转向数据与 AI',
+    '转向管理与协作',
+    '转向内容与创意',
+    '转向客户与销售',
+    '探索自由职业',
+  ];
+
+  /** 学习方式偏好（多选） */
+  const FORMAT_OPTIONS = ['视频课程', '项目实战', '读书与文档', '同伴共学', '跟 AI 边做边学'];
+
+  /** 可接受学习周期（单选） */
+  const HORIZON_OPTIONS = [
+    { value: '1-3m', label: '1–3 个月', desc: '希望尽快见效' },
+    { value: '3-6m', label: '3–6 个月', desc: '稳步推进' },
+    { value: '6-12m', label: '6–12 个月', desc: '系统学习' },
+    { value: '12m+', label: '一年以上', desc: '长期积累' },
+  ];
+
+  /** 变化情景（单选） */
+  const SCENARIO_OPTIONS = [
+    { value: 'slow', label: 'AI 变化较缓', desc: '按 12 个月节奏规划，偏稳健' },
+    { value: 'fast', label: 'AI 变化较快', desc: '按 6 个月节奏规划，优先补关键短板' },
+  ];
+
+  /** 各分组最多可选数量 */
+  const MAX = { tasks: 8, skills: 6, pains: 4, interests: 6, directions: 3, formats: 3 };
+
+  /** 学习周期对应的周数上限，用于判断计划是否可行 */
+  const HORIZON_WEEKS = { '1-3m': 13, '3-6m': 26, '6-12m': 52, '12m+': 78 };
+
+  /* =========================================================
+   * 2. 状态
+   * ======================================================= */
+  const state = {
+    view: 'form',
+    step: 1,
+    role: '',
+    experienceYears: 3,
+    weeklyStudyHours: 8,
+    tasks: new Set(),
+    skills: new Set(),
+    pains: new Set(),
+    aiUsage: '',
+    interests: new Set(),
+    directions: new Set(),
+    formats: new Set(),
+    horizon: '',
+    scenario: '',
+  };
+
+  /* =========================================================
+   * 3. DOM 引用
+   * ======================================================= */
+  const byId = function (id) { return document.getElementById(id); };
+  const pills = Array.from(document.querySelectorAll('.step-pill'));
+  const panels = Array.from(document.querySelectorAll('.panel'));
+
+  const roleSelect = byId('roleSelect');
+  const yearsInput = byId('yearsInput');
+  const hoursRange = byId('hoursRange');
+  const hoursValue = byId('hoursValue');
+  const step2Title = byId('step2Title');
+  const step2Subtitle = byId('step2Subtitle');
+  const step2Notice = byId('step2Notice');
+  const step3Notice = byId('step3Notice');
+  const toast = byId('toast');
+
+  const containers = {
+    tasks: byId('taskOptions'),
+    skills: byId('skillOptions'),
+    pains: byId('painOptions'),
+    interests: byId('interestOptions'),
+    directions: byId('directionOptions'),
+    formats: byId('formatOptions'),
+  };
+  const counters = {
+    tasks: byId('taskCount'),
+    skills: byId('skillCount'),
+    pains: byId('painCount'),
+    interests: byId('interestCount'),
+    directions: byId('directionCount'),
+    formats: byId('formatCount'),
+  };
+  const singleGroups = {
+    aiUsage: { el: byId('aiUsageOptions'), counter: byId('aiUsageCount'), options: AI_USAGE_OPTIONS },
+    horizon: { el: byId('horizonOptions'), counter: byId('horizonCount'), options: HORIZON_OPTIONS },
+    scenario: { el: byId('scenarioOptions'), counter: byId('scenarioCount'), options: SCENARIO_OPTIONS },
+  };
+
+  /* =========================================================
+   * 4. 渲染工具
+   * ======================================================= */
+
+  /** 生成一张可勾选卡片 */
+  function createOptionCard(text, inputType, name, value, checked) {
+    const label = document.createElement('label');
+    label.className = 'option-card' + (checked ? ' is-selected' : '');
+
+    const input = document.createElement('input');
+    input.type = inputType;
+    input.name = name;
+    input.value = value;
+    input.checked = checked;
+
+    const body = document.createElement('span');
+    body.className = 'option-body';
+    body.textContent = text;
+
+    const check = document.createElement('span');
+    check.className = 'option-check';
+    check.setAttribute('aria-hidden', 'true');
+    check.textContent = '✔';
+
+    label.append(input, body, check);
+    return label;
+  }
+
+  /** 多选组渲染 */
+  function renderMulti(key, items, max) {
+    const container = containers[key];
+    const selectedSet = state[key];
+    container.innerHTML = '';
+
+    items.forEach(function (text) {
+      const card = createOptionCard(text, 'checkbox', key, text, selectedSet.has(text));
+      const input = card.querySelector('input');
+
+      input.addEventListener('change', function () {
+        if (input.checked) {
+          if (selectedSet.size >= max) {
+            input.checked = false;
+            card.classList.remove('is-selected');
+            showHint('「' + groupName(key) + '」最多选择 ' + max + ' 项');
+            return;
+          }
+          selectedSet.add(text);
+        } else {
+          selectedSet.delete(text);
+        }
+        card.classList.toggle('is-selected', input.checked);
+        updateCounter(key);
+        refreshStatus();
+      });
+
+      container.appendChild(card);
+    });
+
+    updateCounter(key);
+  }
+
+  /** 单选组渲染（AI 频率 / 学习周期 / 情景） */
+  function renderSingle(key) {
+    const config = singleGroups[key];
+    config.el.innerHTML = '';
+
+    config.options.forEach(function (item) {
+      const text = item.label + (item.desc ? ' · ' + item.desc : '');
+      const checked = state[key] === item.value;
+      const card = createOptionCard(text, 'radio', key, item.value, checked);
+
+      card.querySelector('input').addEventListener('change', function () {
+        state[key] = item.value;
+        Array.from(config.el.children).forEach(function (node) {
+          node.classList.toggle('is-selected', node.querySelector('input').checked);
+        });
+        config.counter.textContent = '已选 1 项';
+        refreshStatus();
+      });
+
+      config.el.appendChild(card);
+    });
+
+    config.counter.textContent = '已选 ' + (state[key] ? 1 : 0) + ' 项';
+  }
+
+  function groupName(key) {
+    return {
+      tasks: '日常任务',
+      skills: '已有技能',
+      pains: '最耗时的环节',
+      interests: '兴趣方向',
+      directions: '期望的转型方向',
+      formats: '学习方式偏好',
+    }[key] || key;
+  }
+
+  function updateCounter(key) {
+    counters[key].textContent = '已选 ' + state[key].size + ' 项';
+  }
+
+  /** 当前岗位对应的配置（岗位专属 + 通用，去重） */
+  function presetFor(role) {
+    const base = ROLE_PRESETS[role] || DEFAULT_PRESET;
+    return {
+      tasks: unique(base.tasks.concat(COMMON_TASKS)),
+      skills: unique(base.skills.concat(COMMON_SKILLS)),
+      interests: unique(base.interests.concat(COMMON_INTERESTS)),
+    };
+  }
+
+  function unique(list) {
+    return Array.from(new Set(list));
+  }
+
+  /** 依据岗位重新生成第 2、3 步 */
+  function renderPresetPanels() {
+    const preset = presetFor(state.role);
+    const roleLabel = state.role || '通用';
+
+    step2Title.textContent = roleLabel + ' · 日常任务与已有技能';
+    step2Subtitle.textContent = state.role
+      ? '下面是「' + state.role + '」常见的任务与技能，选择符合你的部分。'
+      : '选择你实际在做的事情，以及已经掌握的能力。';
+
+    step2Notice.hidden = Boolean(state.role);
+    step3Notice.hidden = Boolean(state.role);
+
+    renderMulti('tasks', preset.tasks, MAX.tasks);
+    renderMulti('skills', preset.skills, MAX.skills);
+    renderMulti('pains', PAIN_OPTIONS, MAX.pains);
+    renderMulti('interests', preset.interests, MAX.interests);
+    renderMulti('directions', DIRECTION_OPTIONS, MAX.directions);
+    renderMulti('formats', FORMAT_OPTIONS, MAX.formats);
+
+    renderSingle('aiUsage');
+    renderSingle('horizon');
+    renderSingle('scenario');
+  }
+
+  /* =========================================================
+   * 5. 步骤状态与切换
+   * ======================================================= */
+
+  function isStepDone(step) {
+    if (step === 1) {
+      return Boolean(state.role) && Number.isFinite(state.experienceYears) && state.weeklyStudyHours > 0;
+    }
+    if (step === 2) {
+      return state.tasks.size > 0 && state.skills.size > 0 && state.pains.size > 0 && Boolean(state.aiUsage);
+    }
+    return (
+      state.interests.size > 0 &&
+      state.directions.size > 0 &&
+      state.formats.size > 0 &&
+      Boolean(state.horizon) &&
+      Boolean(state.scenario)
+    );
+  }
+
+  function refreshStatus() {
+    pills.forEach(function (pill) {
+      const step = Number(pill.dataset.step);
+      const active = state.view === 'form' && step === state.step;
+      const done = isStepDone(step);
+      pill.classList.toggle('is-active', active);
+      pill.classList.toggle('is-done', done && !active);
+      pill.setAttribute('aria-pressed', String(active));
+    });
+
+    panels.forEach(function (panel) {
+      const key = panel.dataset.panel;
+      const visible = state.view === 'result' ? key === 'result' : Number(key) === state.step;
+      panel.hidden = !visible;
+    });
+  }
+
+  function goToStep(step) {
+    if (step < 1 || step > 3) return;
+    state.view = 'form';
+    state.step = step;
+    refreshStatus();
+  }
+
+  /* =========================================================
+   * 6. 结果计算（纯前端规则，无后端）
+   * ======================================================= */
+
+  function buildPayload() {
+    return {
+      currentRole: state.role,
+      experienceYears: state.experienceYears,
+      weeklyStudyHours: state.weeklyStudyHours,
+      dailyTasks: Array.from(state.tasks),
+      existingSkills: Array.from(state.skills),
+      painPoints: Array.from(state.pains),
+      aiUsage: state.aiUsage,
+      interests: Array.from(state.interests),
+      targetDirections: Array.from(state.directions),
+      learningFormats: Array.from(state.formats),
+      horizon: state.horizon,
+      scenario: state.scenario,
+    };
+  }
+
+  /** 技能归类，用于技能画像 */
+  const SKILL_GROUPS = [
+    { name: '数据与工具', words: ['Excel', 'SQL', 'Python', '数据', '统计', '可视化', 'Office', 'ERP', 'CRM', 'PS', '设备', '编程', '数据库', '系统'] },
+    { name: '沟通与协作', words: ['沟通', '客户', '谈判', '协作', '讲授', '面试', '投诉', '情绪', '团队'] },
+    { name: '业务与流程', words: ['流程', '管理', '项目', '运营', '库存', '质量', '财务', '核算', '税务', '成本', '门店', '仓储', '排版'] },
+    { name: '内容与创意', words: ['内容', '文案', '设计', '创作', '社媒', '审美', '素材'] },
+  ];
+
+  /** 个别技能名会误命中关键词，这里先做精确归类 */
+  const EXACT_GROUP = {
+    '时间管理': '通用能力',
+    '文档写作': '通用能力',
+    '供应商对接': '通用能力',
+    '学习新工具的能力': '通用能力',
+  };
+
+  function categorizeSkill(skill) {
+    if (EXACT_GROUP[skill]) return EXACT_GROUP[skill];
+
+    const hit = SKILL_GROUPS.find(function (group) {
+      return group.words.some(function (word) { return skill.indexOf(word) !== -1; });
+    });
+    return hit ? hit.name : '通用能力';
+  }
+
+  /** 方向打分规则：兴趣命中 + 技能命中 + AI 频率 + 情景 + 用户主动选择 */
+  const DIRECTION_RULES = {
+    '转向数据与 AI': {
+      interests: ['喜欢从数据中找规律', '喜欢学习新的 AI 工具'],
+      skills: ['Excel', 'SQL', 'Python', '数据', '统计', '可视化'],
+      aiUsage: { none: 0, rare: 2, weekly: 5, daily: 8 },
+      fastBonus: 4,
+      advice: '先把 Excel 或 SQL 练到能独立出报表，再用 AI 辅助做分析与复盘。',
+    },
+    '流程自动化 / 效率提升': {
+      interests: ['喜欢把流程做得更顺', '喜欢用工具替代重复劳动'],
+      skills: ['流程', '自动化', 'Excel', '工具', '管理'],
+      aiUsage: { none: 2, rare: 4, weekly: 6, daily: 8 },
+      fastBonus: 4,
+      advice: '从最耗时的重复环节入手，把手工步骤改写成模板或自动化流程。',
+    },
+    '转向管理与协作': {
+      interests: ['喜欢与人协作，辅导他人', '喜欢解决具体问题'],
+      skills: ['管理', '项目', '沟通', '团队', '协调'],
+      aiUsage: { none: 1, rare: 2, weekly: 3, daily: 4 },
+      fastBonus: 1,
+      advice: '把日常工作沉淀成流程与标准，练习拆解目标和带人交付。',
+    },
+    '转向内容与创意': {
+      interests: ['喜欢内容创作与表达', '喜欢沉淀文档与知识库'],
+      skills: ['内容', '文案', '设计', '创作', '文档', '审美'],
+      aiUsage: { none: 2, rare: 4, weekly: 6, daily: 8 },
+      fastBonus: 2,
+      advice: '建立自己的内容模板库，用 AI 做初稿，把精力放在选题与判断上。',
+    },
+    '转向客户与销售': {
+      interests: ['喜欢与人协作，辅导他人', '喜欢解决具体问题'],
+      skills: ['客户', '沟通', '谈判', '销售', '投诉'],
+      aiUsage: { none: 0, rare: 2, weekly: 4, daily: 5 },
+      fastBonus: 1,
+      advice: '把客户问题整理成话术库，用数据判断哪些客户值得优先投入。',
+    },
+    '自由职业 / 副业探索': {
+      interests: ['喜欢内容创作与表达', '喜欢学习新的 AI 工具'],
+      skills: ['自我管理', '内容', '项目', '设计', '写作'],
+      aiUsage: { none: 1, rare: 3, weekly: 5, daily: 6 },
+      fastBonus: 1,
+      advice: '先做一个小而完整的外部项目，验证自己的交付能力与定价。',
+    },
+  };
+
+  function scoreDirections(payload) {
+    const skillText = payload.existingSkills.join(' ');
+    const results = Object.keys(DIRECTION_RULES).map(function (name) {
+      const rule = DIRECTION_RULES[name];
+      const interestHits = rule.interests.filter(function (item) {
+        return payload.interests.indexOf(item) !== -1;
+      });
+      const skillHits = rule.skills.filter(function (word) {
+        return skillText.indexOf(word) !== -1;
+      });
+      const chosen = payload.targetDirections.indexOf(name) !== -1;
+
+      let score = 30;
+      score += interestHits.length * 12;
+      score += Math.min(4, skillHits.length) * 6;
+      score += rule.aiUsage[payload.aiUsage] || 0;
+      if (payload.scenario === 'fast') score += rule.fastBonus;
+      // 用户主动选择的方向权重最高，避免结果与本人意愿相反
+      if (chosen) score += 18;
+
+      const reasons = [];
+      if (interestHits.length) reasons.push('兴趣命中：' + interestHits.join('、'));
+      if (skillHits.length) reasons.push('技能相关：' + skillHits.join('、'));
+      if (payload.aiUsage === 'weekly' || payload.aiUsage === 'daily') reasons.push('已在使用 AI 工具');
+      if (chosen) reasons.push('你主动选择了这个方向');
+      if (!reasons.length) reasons.push('与当前选择关联较弱，可作为备选');
+
+      return {
+        name: name,
+        score: Math.max(20, Math.min(96, score)),
+        reasons: reasons,
+        advice: rule.advice,
+      };
+    });
+
+    return results.sort(function (a, b) { return b.score - a.score; }).slice(0, 3);
+  }
+
+  /** 建议补齐的技能：岗位要求但未勾选，最多 5 个 */
+  function suggestGaps(payload) {
+    const preset = presetFor(payload.currentRole);
+    const missing = preset.skills.filter(function (skill) {
+      return payload.existingSkills.indexOf(skill) === -1;
+    });
+    return missing.slice(0, 5);
+  }
+
+  function estimateHours(skills) {
+    return skills.map(function (skill) {
+      const heavy = /SQL|Python|编程|数据库|系统设计/.test(skill);
+      const light = /文档|时间管理|沟通|情绪/.test(skill);
+      return { skill: skill, hours: heavy ? 24 : light ? 8 : 14 };
+    });
+  }
+
+  /* =========================================================
+   * 7. 渲染结果
+   * ======================================================= */
+  function renderResult() {
+    const payload = buildPayload();
+    const aiUsageLabel = (AI_USAGE_OPTIONS.find(function (o) { return o.value === payload.aiUsage; }) || {}).label || '未选择';
+    const horizonLabel = (HORIZON_OPTIONS.find(function (o) { return o.value === payload.horizon; }) || {}).label || '未选择';
+    // 未选择情景时不能默认写成「较缓」，否则看起来像用户已经选过
+    const scenarioLabel = payload.scenario === 'fast'
+      ? 'AI 变化较快'
+      : payload.scenario === 'slow'
+        ? 'AI 变化较缓'
+        : '未选择';
+
+    const directions = scoreDirections(payload);
+
+    // 目标方向与综合评分第一不一致时，明确说明原因，避免看起来像矛盾
+    const chosenDirection = payload.targetDirections[0] || '';
+    const gapNote = chosenDirection && directions[0] && directions[0].name !== chosenDirection
+      ? '你主动选择的方向是「' + chosenDirection + '」，但就当前技能与兴趣来看，「' + directions[0].name + '」更容易先上手。'
+      : '';
+
+    byId('resultSummary').textContent =
+      (payload.currentRole || '暂未选择岗位') + '，' + payload.experienceYears + ' 年经验，每周可投入 ' +
+      payload.weeklyStudyHours + ' 小时；工作中使用 AI 的频率为「' + aiUsageLabel + '」，目标方向：' +
+      (payload.targetDirections.join('、') || '未选择') + '。' + gapNote +
+      '以下为根据这些选择生成的示例分析，不是预测。';
+
+    byId('resultBasics').innerHTML = [
+      ['当前岗位', payload.currentRole || '未选择'],
+      ['工作经验', payload.experienceYears + ' 年'],
+      ['每周学习时间', payload.weeklyStudyHours + ' 小时'],
+      ['AI 使用频率', aiUsageLabel],
+      ['可接受周期', horizonLabel],
+      ['变化情景', scenarioLabel],
+    ].map(function (row) {
+      return '<dt>' + row[0] + '</dt><dd>' + escapeHtml(String(row[1])) + '</dd>';
+    }).join('');
+
+    const grouped = {};
+    payload.existingSkills.forEach(function (skill) {
+      const group = categorizeSkill(skill);
+      (grouped[group] = grouped[group] || []).push(skill);
+    });
+
+    byId('resultSkills').innerHTML =
+      (Object.keys(grouped).length
+        ? Object.keys(grouped).map(function (group) {
+            return '<div class="chip-group"><span class="chip-label">' + escapeHtml(group) + ' · ' + grouped[group].length + ' 项</span><div class="chip-row">' +
+              grouped[group].map(function (s) { return '<span class="chip">' + escapeHtml(s) + '</span>'; }).join('') +
+              '</div></div>';
+          }).join('')
+        : '<p class="match-reason">还没有选择技能。</p>') +
+      (payload.painPoints.length
+        ? '<div class="chip-group"><span class="chip-label">最耗时环节 · ' + payload.painPoints.length + ' 项</span><div class="chip-row">' +
+          payload.painPoints.map(function (p) { return '<span class="chip chip-muted">' + escapeHtml(p) + '</span>'; }).join('') +
+          '</div></div>'
+        : '');
+
+    byId('resultDirections').innerHTML = directions.map(function (item) {
+      return '<div class="match">' +
+        '<div class="match-head"><span class="match-title">' + escapeHtml(item.name) + '</span><span class="match-score">' + item.score + '</span></div>' +
+        '<div class="match-bar"><span style="width:' + item.score + '%"></span></div>' +
+        '<p class="match-reason">' + escapeHtml(item.reasons.join('；')) + '。建议：' + escapeHtml(item.advice) + '</p>' +
+        '</div>';
+    }).join('');
+
+    const gaps = estimateHours(suggestGaps(payload));
+    const totalHours = gaps.reduce(function (sum, item) { return sum + item.hours; }, 0);
+    const weeks = Math.max(1, Math.ceil(totalHours / payload.weeklyStudyHours));
+    const horizonWeeks = HORIZON_WEEKS[payload.horizon] || 0;
+    const feasible = horizonWeeks ? weeks <= horizonWeeks : true;
+
+    byId('resultPlan').innerHTML =
+      (gaps.length
+        ? '<ol class="plan-list">' + gaps.map(function (item) {
+            return '<li>补齐 <strong>' + escapeHtml(item.skill) + '</strong>，预计 ' + item.hours + ' 小时</li>';
+          }).join('') + '</ol>'
+        : '<p class="match-reason">你已覆盖该岗位的常见技能，可以把精力放在进阶项目上。</p>') +
+      '<p class="match-reason" style="margin-top:10px">合计约 ' + totalHours + ' 小时，按每周 ' + payload.weeklyStudyHours +
+      ' 小时计算约需 ' + weeks + ' 周；你接受的学习周期为「' + horizonLabel + '」' +
+      (horizonWeeks ? (feasible ? '，计划在可接受范围内。' : '，时间偏紧，建议提高每周投入或延长周期。') : '。') +
+      '偏好方式：' + (payload.learningFormats.join('、') || '未选择') + '。</p>';
+
+    byId('rawJson').textContent = JSON.stringify(payload, null, 2);
+  }
+
+  function escapeHtml(text) {
+    return String(text)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  /* =========================================================
+   * 8. 事件绑定
+   * ======================================================= */
+
+  pills.forEach(function (pill) {
+    pill.addEventListener('click', function () {
+      goToStep(Number(pill.dataset.step));
+    });
+  });
+
+  document.querySelectorAll('[data-goto]').forEach(function (button) {
+    button.addEventListener('click', function () {
+      goToStep(Number(button.dataset.goto));
+    });
+  });
+
+  roleSelect.addEventListener('change', function () {
+    state.role = roleSelect.value;
+    // 换岗位后清空依赖岗位的选择，避免残留不相关选项
+    state.tasks.clear();
+    state.skills.clear();
+    state.interests.clear();
+    renderPresetPanels();
+    refreshStatus();
+  });
+
+  yearsInput.addEventListener('input', function () {
+    const value = Number(yearsInput.value);
+    state.experienceYears = Number.isFinite(value) ? Math.max(0, Math.min(50, value)) : 0;
+    refreshStatus();
+  });
+
+  hoursRange.addEventListener('input', function () {
+    state.weeklyStudyHours = Number(hoursRange.value);
+    hoursValue.textContent = state.weeklyStudyHours + ' 小时 / 周';
+    refreshStatus();
+  });
+
+  byId('submitBtn').addEventListener('click', function () {
+    const payload = buildPayload();
+
+    // 仍然保留控制台输出，方便调试
+    console.log('收集到的信息：', payload);
+    console.log(JSON.stringify(payload, null, 2));
+
+    renderResult();
+    state.view = 'result';
+    refreshStatus();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  document.querySelector('[data-back]').addEventListener('click', function () {
+    goToStep(3);
+  });
+
+  document.querySelector('[data-reset]').addEventListener('click', function () {
+    state.tasks.clear();
+    state.skills.clear();
+    state.pains.clear();
+    state.interests.clear();
+    state.directions.clear();
+    state.formats.clear();
+    state.aiUsage = '';
+    state.horizon = '';
+    state.scenario = '';
+    renderPresetPanels();
+    goToStep(1);
+  });
+
+  /* =========================================================
+   * 9. 提示条
+   * ======================================================= */
+  let hintTimer = null;
+  function showHint(message) {
+    toast.hidden = false;
+    toast.textContent = message;
+    if (hintTimer) clearTimeout(hintTimer);
+    hintTimer = setTimeout(function () { toast.hidden = true; }, 2200);
+  }
+
+  /* =========================================================
+   * 10. 初始化
+   * ======================================================= */
+  state.role = roleSelect.value;
+  state.experienceYears = Number(yearsInput.value) || 0;
+  state.weeklyStudyHours = Number(hoursRange.value) || 8;
+  hoursValue.textContent = state.weeklyStudyHours + ' 小时 / 周';
+
+  renderPresetPanels();
+  refreshStatus();
+})();
+</script>
+</body>
+</html>

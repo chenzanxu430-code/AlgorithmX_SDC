@@ -1,0 +1,148 @@
+@import "tailwindcss";
+
+/* =========================================================
+ * 浅色科技感主题：极光渐变 + 细网格 + 磨砂卡片
+ * ======================================================= */
+:root {
+  color-scheme: light;
+
+  /* 文字 */
+  --ink: #0b1b33;
+  --ink-body: #3c4e68;
+  --ink-muted: #6b7c96;
+
+  /* 主色：蓝 → 青；辅助：紫、绿、橙、红 */
+  --accent: #2563eb;
+  --accent-strong: #1d4ed8;
+  --accent-2: #06b6d4;
+  --violet: #7c3aed;
+  --green: #0f9f6e;
+  --amber: #d97706;
+  --coral: #dc4b3e;
+
+  --line: rgba(15, 42, 74, 0.10);
+  --line-soft: rgba(15, 42, 74, 0.06);
+
+  --glass: rgba(255, 255, 255, 0.74);
+  --glass-strong: rgba(255, 255, 255, 0.88);
+  --glass-sub: rgba(255, 255, 255, 0.62);
+
+  --shadow-card: 0 18px 44px rgba(15, 42, 74, 0.09);
+  --shadow-soft: 0 8px 22px rgba(15, 42, 74, 0.07);
+}
+
+body {
+  min-height: 100vh;
+  color: var(--ink);
+  font-family:
+    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    "Helvetica Neue", "PingFang SC", "Microsoft YaHei", sans-serif;
+  -webkit-font-smoothing: antialiased;
+
+  /* 四角极光 + 细网格 + 竖向渐变 */
+  background-color: #f4f8ff;
+  background-image:
+    radial-gradient(46rem 30rem at 8% -8%, rgba(6, 182, 212, 0.22), transparent 62%),
+    radial-gradient(42rem 28rem at 96% 2%, rgba(124, 58, 237, 0.18), transparent 60%),
+    radial-gradient(52rem 34rem at 74% 96%, rgba(37, 99, 235, 0.14), transparent 64%),
+    radial-gradient(34rem 22rem at 4% 88%, rgba(15, 159, 110, 0.12), transparent 62%),
+    linear-gradient(rgba(15, 42, 74, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(15, 42, 74, 0.045) 1px, transparent 1px),
+    linear-gradient(180deg, #f7fbff 0%, #eef4ff 46%, #f5f8ff 100%);
+  background-size: auto, auto, auto, auto, 34px 34px, 34px 34px, auto;
+  background-attachment: fixed;
+  background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat, repeat, no-repeat;
+}
+
+/* ===== 磨砂卡片 ===== */
+.glass {
+  background: var(--glass);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: 18px;
+  box-shadow: var(--shadow-card);
+  @apply backdrop-blur-[16px] backdrop-saturate-150;
+}
+
+.glass-strong {
+  background: var(--glass-strong);
+}
+
+.glass-sub {
+  background: var(--glass-sub);
+  border: 1px solid var(--line-soft);
+  border-radius: 14px;
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass { background: rgba(255, 255, 255, 0.94); }
+  .glass-sub { background: rgba(255, 255, 255, 0.88); }
+}
+
+/* ===== Flat, borderless brand mark ===== */
+.logo-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex: none;
+}
+
+/* ===== 虚线徽标 ===== */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px dashed transparent;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+.badge-high { color: var(--coral); border-color: rgba(220, 75, 62, 0.42); background: rgba(220, 75, 62, 0.06); }
+.badge-medium { color: var(--amber); border-color: rgba(217, 119, 6, 0.42); background: rgba(217, 119, 6, 0.07); }
+.badge-low { color: var(--green); border-color: rgba(15, 159, 110, 0.38); background: rgba(15, 159, 110, 0.06); }
+.badge-neutral { color: var(--ink-muted); border-color: rgba(15, 42, 74, 0.16); background: rgba(255, 255, 255, 0.6); }
+
+/* ===== 状态圆点 ===== */
+.status-dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  flex: none;
+}
+.status-gap { color: var(--coral); background: rgba(220, 75, 62, 0.10); }
+.status-strength { color: var(--green); background: rgba(15, 159, 110, 0.12); }
+
+/* ===== 数字排版 ===== */
+.tnum { font-variant-numeric: tabular-nums; }
+
+/* ===== 锚点滚动偏移（吸顶头部高度） ===== */
+.section-anchor { scroll-margin-top: 84px; }
+
+/* ===== 打印 ===== */
+@page { margin: 14mm; }
+
+@media print {
+  body {
+    background: #fff !important;
+    color: #111 !important;
+  }
+  .no-print { display: none !important; }
+  .glass,
+  .glass-sub {
+    background: #fff !important;
+    box-shadow: none !important;
+    border-color: #d9e1ea !important;
+    backdrop-filter: none !important;
+  }
+  .section-anchor { scroll-margin-top: 0; }
+  .print-break { break-inside: avoid; page-break-inside: avoid; }
+}

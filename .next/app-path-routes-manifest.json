@@ -1,0 +1,11 @@
+{
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/api/analyze/route": "/api/analyze",
+  "/api/trends/route": "/api/trends",
+  "/page": "/",
+  "/result/page": "/result",
+  "/survey/page": "/survey",
+  "/survey/step-2/page": "/survey/step-2",
+  "/survey/step-3/page": "/survey/step-3"
+}
